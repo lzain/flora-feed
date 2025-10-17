@@ -1,5 +1,9 @@
 # Flora Feed
 
+<img width="407" height="844" alt="Screenshot 2025-10-17 at 11 30 57 AM" src="https://github.com/user-attachments/assets/a69f4ed0-b30f-4623-819e-50f5210c8877" />
+<img width="407" height="844" alt="Screenshot 2025-10-17 at 11 30 57 AM" src="https://github.com/user-attachments/assets/02b1e8af-021c-4916-9439-39c12402543b" />
+
+
 A Progressive Web App (PWA) for tracking your General Hydroponics Flora Series feeding schedule. Built with Vite, React, TypeScript, Tailwind CSS, and Shadcn/UI. Developed using claude-4.5-sonnet.
 
 ## Features

@@ -4,6 +4,7 @@ import type { UnitType } from "./storage";
 const ML_PER_GALLON = 3785.41; // 1 US gallon = 3785.41 ml
 const ML_PER_5L = 5000; // 5 liters = 5000 ml
 const ML_PER_LITER = 1000; // 1 liter = 1000 ml
+const ML_PER_1_5L = 1500; // 1.5 liters = 1500 ml
 
 /**
  * Converts a value from ml/gal (base unit) to the target unit
@@ -29,6 +30,11 @@ export function convertFromMlPerGal(
     return Number((mlPerGal * (ML_PER_LITER / ML_PER_GALLON)).toFixed(2));
   }
 
+  if (targetUnit === "ml/1.5L") {
+    // ml/gal × (1.5L / 1gal) = ml/gal × (1500ml / 3785.41ml)
+    return Number((mlPerGal * (ML_PER_1_5L / ML_PER_GALLON)).toFixed(2));
+  }
+
   return mlPerGal;
 }
 
@@ -42,6 +48,8 @@ export function getUnitLabel(unit: UnitType): string {
     case "ml/5L":
       return "ml";
     case "ml/L":
+      return "ml";
+    case "ml/1.5L":
       return "ml";
     default:
       return "ml";
@@ -59,6 +67,8 @@ export function getUnitDescription(unit: UnitType): string {
       return "per 5 Liters";
     case "ml/L":
       return "per Liter";
+    case "ml/1.5L":
+      return "per 1.5 Liters";
     default:
       return "";
   }

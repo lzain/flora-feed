@@ -210,6 +210,9 @@ export function SettingsPage({ onBack, onSettingsChange }: SettingsPageProps) {
                         ml per 5 Liters (ml/5L)
                       </SelectItem>
                       <SelectItem value="ml/L">ml per Liter (ml/L)</SelectItem>
+                      <SelectItem value="ml/1.5L">
+                        ml per 1.5 Liters (ml/1.5L)
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                   <p className="text-sm text-muted-foreground">

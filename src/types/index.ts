@@ -53,7 +53,7 @@ export interface WateringRecord {
   growthStage: string;
 }
 
-export type UnitType = "ml/gal" | "ml/5L" | "ml/L";
+export type UnitType = "ml/gal" | "ml/5L" | "ml/L" | "ml/1.5L";
 
 export interface AppSettings {
   selectedPresetId: string;

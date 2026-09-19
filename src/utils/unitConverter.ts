@@ -7,35 +7,32 @@ const ML_PER_LITER = 1000; // 1 liter = 1000 ml
 const ML_PER_1_5L = 1500; // 1.5 liters = 1500 ml
 
 /**
- * Converts a value from ml/gal (base unit) to the target unit
- * @param mlPerGal Value in ml per gallon (base unit stored in presets)
+ * Converts a value from ml/5L (base unit stored in presets) to the target unit
+ * @param mlPer5L Value in ml per 5 liters
  * @param targetUnit Target unit to convert to
  * @returns Converted value rounded to 2 decimal places
  */
-export function convertFromMlPerGal(
-  mlPerGal: number,
+export function convertFromMlPer5L(
+  mlPer5L: number,
   targetUnit: UnitType
 ): number {
-  if (targetUnit === "ml/gal") {
-    return Number(mlPerGal.toFixed(2));
+  if (targetUnit === "ml/5L") {
+    return Number(mlPer5L.toFixed(2));
   }
 
-  if (targetUnit === "ml/5L") {
-    // ml/gal × (5L / 1gal) = ml/gal × (5000ml / 3785.41ml)
-    return Number((mlPerGal * (ML_PER_5L / ML_PER_GALLON)).toFixed(2));
+  if (targetUnit === "ml/gal") {
+    return Number((mlPer5L * (ML_PER_GALLON / ML_PER_5L)).toFixed(2));
   }
 
   if (targetUnit === "ml/L") {
-    // ml/gal × (1L / 1gal) = ml/gal × (1000ml / 3785.41ml)
-    return Number((mlPerGal * (ML_PER_LITER / ML_PER_GALLON)).toFixed(2));
+    return Number((mlPer5L * (ML_PER_LITER / ML_PER_5L)).toFixed(2));
   }
 
   if (targetUnit === "ml/1.5L") {
-    // ml/gal × (1.5L / 1gal) = ml/gal × (1500ml / 3785.41ml)
-    return Number((mlPerGal * (ML_PER_1_5L / ML_PER_GALLON)).toFixed(2));
+    return Number((mlPer5L * (ML_PER_1_5L / ML_PER_5L)).toFixed(2));
   }
 
-  return mlPerGal;
+  return mlPer5L;
 }
 
 /**

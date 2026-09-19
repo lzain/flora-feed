@@ -1,4 +1,3 @@
-import { Info } from "lucide-react";
 import type { FeedingPreset } from "@/types";
 
 interface PresetSelectorProps {
@@ -28,15 +27,6 @@ export function PresetSelector({
           <h3 className="text-sm font-semibold text-gray-700">
             Built-in Presets
           </h3>
-          <a
-            href="https://generalhydroponics.com/resources/flora-series-feedcharts/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-gray-500 hover:text-gray-700 transition-colors"
-            title="View GH Flora Series Feed Charts"
-          >
-            <Info className="w-4 h-4" />
-          </a>
         </div>
         {presets.map((preset) => (
           <div
@@ -50,12 +40,7 @@ export function PresetSelector({
           >
             <div className="font-semibold text-lg">{preset.name}</div>
             <div className="text-sm text-gray-600 mt-1">
-              {preset.type === "light" &&
-                "Lower nutrient concentration for sensitive plants"}
-              {preset.type === "medium" &&
-                "Balanced nutrient levels for most plants"}
-              {preset.type === "aggressive" &&
-                "Higher nutrient concentration for vigorous growth"}
+              4 weeks growth + 8 weeks flowering. Values per 5 liters.
             </div>
           </div>
         ))}

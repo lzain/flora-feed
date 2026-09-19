@@ -12,7 +12,7 @@ A Progressive Web App (PWA) for tracking your General Hydroponics Flora Series f
 - 🌱 **12-Week Schedule**: Complete vegetation and flowering phase tracking
 - 💧 **Watering Records**: Mark and track when you've watered each week (with unmark capability)
 - 🔄 **Week Navigation**: Easily navigate between weeks to view past and future schedules
-- 🎚️ **Multiple Preset Levels**: Choose from Light, Medium (recommended), or Aggressive feeding schedules
+- 🎚️ **Feed Chart**: Built-in 12-week growth and flowering schedule (values per 5 liters)
 - ✏️ **Custom Presets**: Create, edit, and manage your own custom feeding schedules
 - 📦 **Import/Export**: Backup and share your custom presets as JSON files
 - 📏 **Unit Conversion**: Display nutrients in ml/gal, ml/5L, or ml/L based on your preference
@@ -28,9 +28,9 @@ A Progressive Web App (PWA) for tracking your General Hydroponics Flora Series f
 - FloraBloom®
 
 ### Supplements
-- CALiMAGic®
-- Floralicious
-- KoolBloom
+- calmag
+- armor SI
+- diamond nectar
 
 ## Getting Started
 
@@ -77,7 +77,7 @@ The app will be available at:
 ## Usage
 
 1. **First Time Setup**: When you first open the app, you can optionally adjust settings (preset, units) or enter your schedule start date (the date you started week 1)
-2. **Choose a Preset**: Select from Light, Medium, or Aggressive feeding schedules, or create your own custom preset
+2. **Choose a Preset**: Use the built-in feed chart, or create your own custom preset
 3. **Set Units**: Choose your preferred measurement unit (ml/gal, ml/5L, or ml/L)
 4. **View Schedule**: The app will automatically show you the current week based on your start date
 5. **Navigate Weeks**: Use the arrow buttons to view different weeks

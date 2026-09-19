@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Droplet, Calendar } from "lucide-react";
-import { convertFromMlPerGal, getUnitDescription } from "@/utils/unitConverter";
+import { convertFromMlPer5L, getUnitDescription } from "@/utils/unitConverter";
+import { NUTRIENTS } from "@/constants/app";
 import type { WateringRecord, UnitType } from "@/types";
 
 interface WateringStatusCardProps {
@@ -58,7 +59,6 @@ export function WateringStatusCard({
             </span>
           </div>
 
-          {/* Display nutrients used */}
           <div className="pt-2 border-t">
             <h4 className="text-sm font-semibold text-gray-700 mb-2">
               Nutrients Used ({getUnitDescription(currentUnit)})
@@ -67,74 +67,23 @@ export function WateringStatusCard({
               {wateringRecord.phase === "flush" ? (
                 <p className="text-gray-600 italic">Plain water only</p>
               ) : (
-                <>
-                  <div className="flex justify-between">
-                    <span className="text-pink-700">FloraMicro:</span>
+                NUTRIENTS.filter((nutrient) => {
+                  const amount = wateringRecord.nutrients[nutrient.key];
+                  return nutrient.group === "base" || !!amount;
+                }).map((nutrient) => (
+                  <div key={nutrient.key} className="flex justify-between">
+                    <span className={nutrient.textColor}>
+                      {nutrient.label}:
+                    </span>
                     <span className="font-medium">
-                      {convertFromMlPerGal(
-                        wateringRecord.nutrients.floraMicro,
+                      {convertFromMlPer5L(
+                        wateringRecord.nutrients[nutrient.key] ?? 0,
                         currentUnit
                       )}{" "}
                       ml
                     </span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-green-700">FloraGro:</span>
-                    <span className="font-medium">
-                      {convertFromMlPerGal(
-                        wateringRecord.nutrients.floraGro,
-                        currentUnit
-                      )}{" "}
-                      ml
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-red-700">FloraBloom:</span>
-                    <span className="font-medium">
-                      {convertFromMlPerGal(
-                        wateringRecord.nutrients.floraBloom,
-                        currentUnit
-                      )}{" "}
-                      ml
-                    </span>
-                  </div>
-                  {wateringRecord.nutrients.caliMagic && (
-                    <div className="flex justify-between">
-                      <span className="text-orange-700">CALiMAGic:</span>
-                      <span className="font-medium">
-                        {convertFromMlPerGal(
-                          wateringRecord.nutrients.caliMagic,
-                          currentUnit
-                        )}{" "}
-                        ml
-                      </span>
-                    </div>
-                  )}
-                  {wateringRecord.nutrients.floralicious && (
-                    <div className="flex justify-between">
-                      <span className="text-yellow-700">Floralicious:</span>
-                      <span className="font-medium">
-                        {convertFromMlPerGal(
-                          wateringRecord.nutrients.floralicious,
-                          currentUnit
-                        )}{" "}
-                        ml
-                      </span>
-                    </div>
-                  )}
-                  {wateringRecord.nutrients.koolBloom && (
-                    <div className="flex justify-between">
-                      <span className="text-blue-700">KoolBloom:</span>
-                      <span className="font-medium">
-                        {convertFromMlPerGal(
-                          wateringRecord.nutrients.koolBloom,
-                          currentUnit
-                        )}{" "}
-                        ml
-                      </span>
-                    </div>
-                  )}
-                </>
+                ))
               )}
             </div>
           </div>
@@ -151,4 +100,3 @@ export function WateringStatusCard({
     </Card>
   );
 }
-

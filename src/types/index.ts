@@ -11,20 +11,21 @@ export interface WeekSchedule {
   phase: "vegetation" | "flowering" | "flush";
   phaseWeek: number;
   growthStage: string;
+  ppm: string;
   floraMicro: number;
   floraGro: number;
   floraBloom: number;
-  caliMagic?: number;
-  floralicious?: number;
-  koolBloom?: number;
+  calmag?: number;
+  armorSi?: number;
+  diamondNectar?: number;
 }
 
-export type PresetType = "light" | "medium" | "aggressive";
+export type PresetType = "standard" | "custom";
 
 export interface FeedingPreset {
   id: string;
   name: string;
-  type: PresetType | "custom";
+  type: PresetType;
   schedule: WeekSchedule[];
 }
 
@@ -40,9 +41,9 @@ export interface NutrientValues {
   floraMicro: number;
   floraGro: number;
   floraBloom: number;
-  caliMagic?: number;
-  floralicious?: number;
-  koolBloom?: number;
+  calmag?: number;
+  armorSi?: number;
+  diamondNectar?: number;
 }
 
 export interface WateringRecord {

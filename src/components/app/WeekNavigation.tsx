@@ -75,6 +75,11 @@ export function WeekNavigation({
                 </div>
               )}
               <div className="mt-0.5">{weekSchedule.growthStage}</div>
+              {weekSchedule.ppm && (
+                <div className="mt-0.5 text-sm text-gray-500">
+                  Target PPM {weekSchedule.ppm}
+                </div>
+              )}
             </CardDescription>
           </div>
 

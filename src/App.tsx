@@ -45,9 +45,9 @@ function App() {
       floraMicro: weekSchedule.floraMicro,
       floraGro: weekSchedule.floraGro,
       floraBloom: weekSchedule.floraBloom,
-      caliMagic: weekSchedule.caliMagic,
-      floralicious: weekSchedule.floralicious,
-      koolBloom: weekSchedule.koolBloom,
+      calmag: weekSchedule.calmag,
+      armorSi: weekSchedule.armorSi,
+      diamondNectar: weekSchedule.diamondNectar,
     };
 
     markAsWatered(
@@ -63,7 +63,7 @@ function App() {
   };
 
   // Calculate values
-  const totalWeeks = currentPreset ? getTotalWeeks(currentPreset.schedule) : 13;
+  const totalWeeks = currentPreset ? getTotalWeeks(currentPreset.schedule) : 12;
   const weekSchedule = currentPreset
     ? getWeekSchedule(selectedWeek, currentPreset.schedule)
     : null;

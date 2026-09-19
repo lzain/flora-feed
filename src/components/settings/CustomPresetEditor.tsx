@@ -17,6 +17,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { ArrowLeft, Plus, Trash2, Sprout } from "lucide-react";
+import { NUTRIENTS } from "@/constants/app";
 import type { FeedingPreset, WeekSchedule } from "@/types";
 
 interface CustomPresetEditorProps {
@@ -104,6 +105,7 @@ export function CustomPresetEditor({
       phase: lastWeek.phase,
       phaseWeek: lastWeek.phaseWeek + 1,
       growthStage: "New Stage",
+      ppm: lastWeek.ppm || "",
       floraMicro: 0,
       floraGro: 0,
       floraBloom: 0,
@@ -128,14 +130,11 @@ export function CustomPresetEditor({
     setEditedPreset({ ...editedPreset, schedule: renumberedSchedule });
   };
 
-  const nutrients = [
-    { key: "floraMicro", label: "FloraMicro", color: "text-pink-700" },
-    { key: "floraGro", label: "FloraGro", color: "text-green-700" },
-    { key: "floraBloom", label: "FloraBloom", color: "text-red-700" },
-    { key: "caliMagic", label: "CALiMAGic", color: "text-orange-700" },
-    { key: "floralicious", label: "Floralicious", color: "text-yellow-700" },
-    { key: "koolBloom", label: "KoolBloom", color: "text-blue-700" },
-  ];
+  const nutrients = NUTRIENTS.map((nutrient) => ({
+    key: nutrient.key,
+    label: nutrient.label,
+    color: nutrient.textColor,
+  }));
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100">
@@ -162,7 +161,7 @@ export function CustomPresetEditor({
                 </CardTitle>
                 <CardDescription className="text-center sm:text-left">
                   Customize nutrient values for each week
-                  <br className="sm:hidden" /> (values in ml/gal)
+                  <br className="sm:hidden" /> (values in ml/5L)
                 </CardDescription>
               </div>
               <div className="gap-2 sm:flex hidden">

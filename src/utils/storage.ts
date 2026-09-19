@@ -11,7 +11,8 @@
  */
 
 import { PRESETS as FEEDING_PRESETS } from "@/data/feedingSchedule";
-import type { FeedingPreset, WeekSchedule } from "@/types";
+import { DEFAULT_PRESET_ID, DEFAULT_UNIT } from "@/constants/app";
+import type { FeedingPreset, NutrientValues, WeekSchedule } from "@/types";
 
 // Re-export PRESETS for convenience
 export { PRESETS } from "@/data/feedingSchedule";
@@ -20,14 +21,7 @@ export interface ScheduleData {
   startDate: string; // ISO date string
 }
 
-export interface NutrientValues {
-  floraMicro: number;
-  floraGro: number;
-  floraBloom: number;
-  caliMagic?: number;
-  floralicious?: number;
-  koolBloom?: number;
-}
+export type { NutrientValues };
 
 export interface WateringRecord {
   week: number;
@@ -48,6 +42,47 @@ const SCHEDULE_KEY = "gh-flora-schedule";
 const WATERING_KEY = "gh-flora-watering";
 const CUSTOM_PRESETS_KEY = "gh-flora-custom-presets";
 const SETTINGS_KEY = "gh-flora-settings";
+const LEGACY_PRESET_IDS = new Set(["light", "medium", "aggressive"]);
+
+const defaultSettings = (): AppSettings => ({
+  selectedPresetId: DEFAULT_PRESET_ID,
+  unit: DEFAULT_UNIT,
+});
+
+/**
+ * Map old nutrient field names onto the current schema
+ */
+const migrateNutrientValues = (
+  nutrients?: Record<string, number | undefined>
+): NutrientValues => {
+  return {
+    floraMicro: nutrients?.floraMicro ?? 0,
+    floraGro: nutrients?.floraGro ?? 0,
+    floraBloom: nutrients?.floraBloom ?? 0,
+    calmag: nutrients?.calmag ?? nutrients?.caliMagic,
+    armorSi: nutrients?.armorSi,
+    diamondNectar: nutrients?.diamondNectar,
+  };
+};
+
+const migrateWeekSchedule = (week: WeekSchedule): WeekSchedule => {
+  let phase = week.phase;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  if (phase === ("grow" as any)) phase = "vegetation";
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  if (phase === ("bloom" as any)) phase = "flowering";
+
+  const nutrients = migrateNutrientValues(
+    week as unknown as Record<string, number | undefined>
+  );
+
+  return {
+    ...week,
+    phase,
+    ppm: week.ppm || "",
+    ...nutrients,
+  };
+};
 
 // ============================================
 // Schedule Management Functions
@@ -96,23 +131,13 @@ export const getWateringRecords = (): WateringRecord[] => {
   if (!data) return [];
   try {
     const records = JSON.parse(data);
-    // Migrate old records that don't have nutrient data
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return records.map((record: any) => {
-      if (!record.nutrients) {
-        return {
-          ...record,
-          nutrients: {
-            floraMicro: 0,
-            floraGro: 0,
-            floraBloom: 0,
-          },
-          phase: record.phase || "vegetation",
-          growthStage: record.growthStage || "Unknown",
-        };
-      }
-      return record;
-    });
+    return records.map((record: any) => ({
+      ...record,
+      nutrients: migrateNutrientValues(record.nutrients),
+      phase: record.phase || "vegetation",
+      growthStage: record.growthStage || "Unknown",
+    }));
   } catch {
     return [];
   }
@@ -156,19 +181,22 @@ export const getWateringRecord = (week: number): WateringRecord | undefined => {
  */
 export const removeWateringRecord = (week: number): void => {
   const records = getWateringRecords();
-  const filteredRecords = records.filter((r) => r.week !== week);
-  localStorage.setItem(WATERING_KEY, JSON.stringify(filteredRecords));
+  const filtered = records.filter((r) => r.week !== week);
+  localStorage.setItem(WATERING_KEY, JSON.stringify(filtered));
 };
 
 /**
  * Calculate current week number based on start date
  */
-export const getCurrentWeek = (startDate: Date): number => {
+export const getCurrentWeek = (
+  startDate: Date,
+  totalWeeks = FEEDING_PRESETS[0].schedule.length
+): number => {
   const now = new Date();
   const diffTime = Math.abs(now.getTime() - startDate.getTime());
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   const weekNumber = Math.ceil(diffDays / 7);
-  return Math.max(1, Math.min(weekNumber, 13)); // Clamp between 1 and 13
+  return Math.max(1, Math.min(weekNumber, totalWeeks));
 };
 
 // ============================================
@@ -183,24 +211,11 @@ export const getCustomPresets = (): FeedingPreset[] => {
   if (!data) return [];
   try {
     const presets = JSON.parse(data) as FeedingPreset[];
-    // Migrate old phase names to new ones
-    const migratedPresets = presets.map((preset) => ({
+    return presets.map((preset) => ({
       ...preset,
-      schedule: preset.schedule.map((week: WeekSchedule) => {
-        let phase = week.phase;
-        // Migrate "grow" to "vegetation"
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        if (phase === ("grow" as any)) phase = "vegetation";
-        // Migrate "bloom" to "flowering"
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        if (phase === ("bloom" as any)) phase = "flowering";
-        return {
-          ...week,
-          phase,
-        };
-      }),
+      type: "custom",
+      schedule: preset.schedule.map(migrateWeekSchedule),
     }));
-    return migratedPresets;
   } catch {
     return [];
   }
@@ -241,7 +256,6 @@ export const importCustomPresets = (presets: FeedingPreset[]): void => {
   presets.forEach((preset) => {
     const existingIndex = merged.findIndex((p) => p.id === preset.id);
     if (existingIndex >= 0) {
-      // Replace existing
       merged[existingIndex] = preset;
     } else {
       merged.push(preset);
@@ -261,18 +275,16 @@ export const importCustomPresets = (presets: FeedingPreset[]): void => {
 export const getSettings = (): AppSettings => {
   const data = localStorage.getItem(SETTINGS_KEY);
   if (!data) {
-    return {
-      selectedPresetId: FEEDING_PRESETS[1].id, // Default to medium
-      unit: "ml/gal",
-    };
+    return defaultSettings();
   }
   try {
-    return JSON.parse(data);
+    const settings = JSON.parse(data) as AppSettings;
+    if (LEGACY_PRESET_IDS.has(settings.selectedPresetId)) {
+      settings.selectedPresetId = DEFAULT_PRESET_ID;
+    }
+    return settings;
   } catch {
-    return {
-      selectedPresetId: FEEDING_PRESETS[1].id,
-      unit: "ml/gal",
-    };
+    return defaultSettings();
   }
 };
 

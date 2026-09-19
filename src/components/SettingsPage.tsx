@@ -26,6 +26,7 @@ import {
   CustomPresetManager,
 } from "@/components/settings";
 import { ArrowLeft, Sprout } from "lucide-react";
+import { DEFAULT_PRESET_ID, DEFAULT_UNIT } from "@/constants/app";
 import type { UnitType, FeedingPreset } from "@/types";
 
 interface SettingsPageProps {
@@ -37,8 +38,8 @@ interface SettingsPageProps {
  * Main settings page with preset selection, custom preset management, and general settings
  */
 export function SettingsPage({ onBack, onSettingsChange }: SettingsPageProps) {
-  const [selectedPreset, setSelectedPreset] = useState("medium");
-  const [selectedUnit, setSelectedUnit] = useState<UnitType>("ml/gal");
+  const [selectedPreset, setSelectedPreset] = useState(DEFAULT_PRESET_ID);
+  const [selectedUnit, setSelectedUnit] = useState<UnitType>(DEFAULT_UNIT);
   const [customPresets, setCustomPresets] = useState<FeedingPreset[]>([]);
   const [editingPreset, setEditingPreset] = useState<FeedingPreset | null>(null);
 
@@ -83,7 +84,7 @@ export function SettingsPage({ onBack, onSettingsChange }: SettingsPageProps) {
       id: `custom-${Date.now()}`,
       name: "New Custom Preset",
       type: "custom",
-      schedule: PRESETS[1].schedule.map((week) => ({ ...week })), // Clone medium schedule as template
+      schedule: PRESETS[0].schedule.map((week) => ({ ...week })),
     };
     setEditingPreset(newPreset);
   };
@@ -100,7 +101,7 @@ export function SettingsPage({ onBack, onSettingsChange }: SettingsPageProps) {
       deleteCustomPreset(id);
       setCustomPresets(getCustomPresets());
       if (selectedPreset === id) {
-        handlePresetChange("medium");
+        handlePresetChange(DEFAULT_PRESET_ID);
       }
     }
   };

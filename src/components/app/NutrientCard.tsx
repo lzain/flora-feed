@@ -6,7 +6,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { NutrientRow } from "./NutrientRow";
-import { convertFromMlPerGal, getUnitDescription } from "@/utils/unitConverter";
+import { convertFromMlPer5L, getUnitDescription } from "@/utils/unitConverter";
+import { NUTRIENTS } from "@/constants/app";
 import type { WeekSchedule, UnitType } from "@/types";
 
 interface NutrientCardProps {
@@ -18,6 +19,11 @@ interface NutrientCardProps {
  * Displays the nutrient schedule for a given week
  */
 export function NutrientCard({ weekSchedule, currentUnit }: NutrientCardProps) {
+  const baseNutrients = NUTRIENTS.filter((n) => n.group === "base");
+  const supplements = NUTRIENTS.filter((n) => n.group === "supplement").filter(
+    (n) => weekSchedule[n.key]
+  );
+
   return (
     <Card>
       <CardHeader>
@@ -36,75 +42,42 @@ export function NutrientCard({ weekSchedule, currentUnit }: NutrientCardProps) {
           </div>
         ) : (
           <>
-            {/* Base Nutrients */}
             <div className="space-y-2">
               <h3 className="text-sm font-semibold text-gray-500 uppercase">
                 Base Nutrients
               </h3>
               <div className="grid grid-cols-1 gap-2">
-                <NutrientRow
-                  name="FloraMicro"
-                  amount={convertFromMlPerGal(
-                    weekSchedule.floraMicro,
-                    currentUnit
-                  )}
-                  color="bg-pink-100 text-pink-700 border-pink-200"
-                />
-                <NutrientRow
-                  name="FloraGro"
-                  amount={convertFromMlPerGal(weekSchedule.floraGro, currentUnit)}
-                  color="bg-green-100 text-green-700 border-green-200"
-                />
-                <NutrientRow
-                  name="FloraBloom"
-                  amount={convertFromMlPerGal(
-                    weekSchedule.floraBloom,
-                    currentUnit
-                  )}
-                  color="bg-red-100 text-red-700 border-red-200"
-                />
+                {baseNutrients.map((nutrient) => (
+                  <NutrientRow
+                    key={nutrient.key}
+                    name={nutrient.label}
+                    amount={convertFromMlPer5L(
+                      weekSchedule[nutrient.key] ?? 0,
+                      currentUnit
+                    )}
+                    color={nutrient.color}
+                  />
+                ))}
               </div>
             </div>
 
-            {/* Optional Nutrients */}
-            {(weekSchedule.caliMagic ||
-              weekSchedule.floralicious ||
-              weekSchedule.koolBloom) && (
+            {supplements.length > 0 && (
               <div className="space-y-2 pt-2 border-t">
                 <h3 className="text-sm font-semibold text-gray-500 uppercase">
                   Supplements
                 </h3>
                 <div className="grid grid-cols-1 gap-2">
-                  {weekSchedule.caliMagic && (
+                  {supplements.map((nutrient) => (
                     <NutrientRow
-                      name="CALiMAGic"
-                      amount={convertFromMlPerGal(
-                        weekSchedule.caliMagic,
+                      key={nutrient.key}
+                      name={nutrient.label}
+                      amount={convertFromMlPer5L(
+                        weekSchedule[nutrient.key] ?? 0,
                         currentUnit
                       )}
-                      color="bg-orange-100 text-orange-700 border-orange-200"
+                      color={nutrient.color}
                     />
-                  )}
-                  {weekSchedule.floralicious && (
-                    <NutrientRow
-                      name="Floralicious Plus"
-                      amount={convertFromMlPerGal(
-                        weekSchedule.floralicious,
-                        currentUnit
-                      )}
-                      color="bg-yellow-100 text-yellow-700 border-yellow-200"
-                    />
-                  )}
-                  {weekSchedule.koolBloom && (
-                    <NutrientRow
-                      name="Liquid KoolBloom"
-                      amount={convertFromMlPerGal(
-                        weekSchedule.koolBloom,
-                        currentUnit
-                      )}
-                      color="bg-blue-100 text-blue-700 border-blue-200"
-                    />
-                  )}
+                  ))}
                 </div>
               </div>
             )}
@@ -114,4 +87,3 @@ export function NutrientCard({ weekSchedule, currentUnit }: NutrientCardProps) {
     </Card>
   );
 }
-
